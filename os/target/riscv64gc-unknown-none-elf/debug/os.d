@@ -1,0 +1,1 @@
+/home/jack/projects/MyOSKernel/os/target/riscv64gc-unknown-none-elf/debug/os: /home/jack/projects/MyOSKernel/os/src/console.rs /home/jack/projects/MyOSKernel/os/src/entry.asm /home/jack/projects/MyOSKernel/os/src/lang_items.rs /home/jack/projects/MyOSKernel/os/src/main.rs /home/jack/projects/MyOSKernel/os/src/sbi.rs
