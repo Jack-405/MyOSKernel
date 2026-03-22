@@ -1,57 +1,51 @@
 OUTPUT_ARCH(riscv)
 ENTRY(_start)
-
 BASE_ADDRESS = 0x80200000;
 
 SECTIONS
 {
-    /* 内核加载地址 */
     . = BASE_ADDRESS;
     skernel = .;
 
-    /* 代码段 */
-    .text : ALIGN(4K) {
-        stext = .;
+    stext = .;
+    .text : {
         *(.text.entry)
         *(.text .text.*)
-        etext = .;
     }
 
-    /* 只读数据 */
-    .rodata : ALIGN(4K) {
-        srodata = .;
+    . = ALIGN(4K);
+    etext = .;
+    srodata = .;
+    .rodata : {
         *(.rodata .rodata.*)
         *(.srodata .srodata.*)
-        erodata = .;
     }
 
-    /* 可写数据 */
-    .data : ALIGN(4K) {
-        sdata = .;
+    . = ALIGN(4K);
+    erodata = .;
+    sdata = .;
+    .data : {
         *(.data .data.*)
         *(.sdata .sdata.*)
-        edata = .;
+        
     }
 
-    /* 未初始化数据 */
-    .bss : ALIGN(4K) {
+    . = ALIGN(4K);
+    edata = .;
+    .bss : {
+        *(.bss.stack)
         sbss = .;
         *(.bss .bss.*)
         *(.sbss .sbss.*)
-        *(.bss.stack)
-        ebss = .;
     }
 
-    /* 内核结束 */
+    . = ALIGN(4K);
+    ebss = .;
     ekernel = .;
 
-    /* 丢弃调试信息 */
+    
+
     /DISCARD/ : {
         *(.eh_frame)
-        *(.debug*)
-        *(.comment)
-        *(.symtab)
-        *(.strtab)
-        *(.riscv.attributes)
     }
 }

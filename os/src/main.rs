@@ -1,7 +1,3 @@
-//! The main module and entrypoint
-//!
-//! Kernel starts from `entry.asm`, then jumps to `rust_main`.
-
 #![no_std]
 #![no_main]
 
@@ -9,34 +5,38 @@
 mod console;
 mod lang_items;
 mod sbi;
+mod sync;
+
+mod trap;
+mod batch;
+mod syscall;
 
 use core::arch::global_asm;
-use crate::sbi::shutdown;
 
 // 引入汇编入口
 global_asm!(include_str!("entry.asm"));
-
-/// 内核入口函数
-#[unsafe(no_mangle)]
+global_asm!(include_str!("link_app.S"));
+#[no_mangle]
 pub fn rust_main() -> ! {
     clear_bss();
+    
+    println!("[kernel] rCore batch OS starting...");
 
-    println!("Hello, world!");
-    println!("Hello, world!");
+    trap::init();          // 设置 stvec = __alltraps
+    
+    batch::init();    // 加载应用程序到内存
+    batch::run_next_app(); // 构造 TrapContext → __restore → sret → 跳到用户态
 
-    shutdown(false);
+    panic!("Unreachable in rust_main");
 }
 
 /// 清空 BSS 段
 fn clear_bss() {
-    unsafe extern "C" {
+    extern "C" {
         fn sbss();
         fn ebss();
     }
-
     for addr in sbss as usize..ebss as usize {
-        unsafe {
-            (addr as *mut u8).write_volatile(0);
-        }
+        unsafe { (addr as *mut u8).write_volatile(0); }
     }
 }

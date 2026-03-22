@@ -6,6 +6,8 @@ edition = "2021"
 [dependencies]
 log = "0.4"
 sbi-rt = { version = "0.0.2", features = ["legacy"] }
+lazy_static = { version = "1.4.0", features = ["spin_no_std"] }
+riscv = "0.16.0"
 
 [profile.dev]
 panic = "abort"
